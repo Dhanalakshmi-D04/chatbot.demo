@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple AI ChatBot</title>
+  <style>
+    body {
+      background: linear-gradient(120deg, #74ebd5, #ACB6E5);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px;
+    }
+
+    #chat {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    #messages {
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+
+    .msg {
+      padding: 8px 12px;
+      margin: 5px 0;
+      border-radius: 10px;
+    }
+
+    .user {
+      background: #d1e7fd;
+      align-self: flex-end;
+      font-weight: bold;
+    }
+
+    .bot {
+      background: #e0ffe0;
+    }
+
+    input {
+      width: 70%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat">
+    <div id="messages"></div>
+    <input id="userInput" type="text" placeholder="Ask me anything..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      const messagesDiv = document.getElementById("messages");
+      messagesDiv.innerHTML += <div class="msg user">You: ${message}</div>;
+      input.value = "";
+
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      messagesDiv.innerHTML += <div class="msg bot">Bot: ${data.response}</div>;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+  </script>
+</body>
+</html>
